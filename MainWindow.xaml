@@ -1,0 +1,357 @@
+<Window x:Class="ThemeForge.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ThemeForge — Редактор тем"
+        Height="750" Width="1100"
+        MinHeight="650" MinWidth="900"
+        WindowStartupLocation="CenterScreen"
+        Background="#0D0D0D"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="CanResize">
+
+    <Window.Resources>
+        <!-- Анимация появления -->
+        <Storyboard x:Key="FadeIn">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                             From="0" To="1" Duration="0:0:0.4"/>
+        </Storyboard>
+    </Window.Resources>
+
+    <!-- Тень окна -->
+    <Border CornerRadius="12" Background="#0D0D0D"
+            BorderBrush="#2D3561" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" BlurRadius="30" Opacity="0.8" ShadowDepth="0"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>   <!-- Заголовок -->
+                <RowDefinition Height="*"/>    <!-- Контент -->
+                <RowDefinition Height="40"/>   <!-- Статус бар -->
+            </Grid.RowDefinitions>
+
+            <!-- ===== ЗАГОЛОВОК ===== -->
+            <Border Grid.Row="0" Background="#0A0A1A" CornerRadius="12,12,0,0"
+                    MouseLeftButtonDown="TitleBar_MouseDown">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Лого и название -->
+                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="🎨" FontSize="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="ThemeForge" FontSize="16" FontWeight="Bold"
+                                   Foreground="White" VerticalAlignment="Center"/>
+                        <TextBlock Text=" — Редактор тем рабочего стола"
+                                   FontSize="13" Foreground="#8892A4" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Кнопки окна -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,10,0">
+                        <Button x:Name="BtnMinimize" Content="─" Width="40" Height="30"
+                                Click="BtnMinimize_Click" ToolTip="Свернуть"
+                                Background="Transparent" Foreground="#8892A4"
+                                BorderThickness="0" FontSize="16" Cursor="Hand"/>
+                        <Button x:Name="BtnMaximize" Content="□" Width="40" Height="30"
+                                Click="BtnMaximize_Click" ToolTip="Развернуть"
+                                Background="Transparent" Foreground="#8892A4"
+                                BorderThickness="0" FontSize="16" Cursor="Hand"/>
+                        <Button x:Name="BtnClose" Content="✕" Width="40" Height="30"
+                                Click="BtnClose_Click" ToolTip="Закрыть"
+                                Background="Transparent" Foreground="#E94560"
+                                BorderThickness="0" FontSize="16" Cursor="Hand"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ===== ОСНОВНОЙ КОНТЕНТ ===== -->
+            <Grid Grid.Row="1" Margin="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>  <!-- Боковое меню -->
+                    <ColumnDefinition Width="*"/>    <!-- Основной контент -->
+                </Grid.ColumnDefinitions>
+
+                <!-- БОКОВОЕ МЕНЮ -->
+                <Border Grid.Column="0" Background="#0A0A1A" BorderBrush="#2D3561" BorderThickness="0,0,1,0">
+                    <StackPanel Margin="10,20,10,10">
+                        <TextBlock Text="РАЗДЕЛЫ" FontSize="10" Foreground="#8892A4"
+                                   FontWeight="Bold" Margin="10,0,0,15" LetterSpacing="2"/>
+
+                        <Button x:Name="BtnMenuThemes" Content="🎨  Темы" Height="42" Margin="0,2"
+                                Click="MenuBtn_Click" Tag="Themes"
+                                Style="{StaticResource SecondaryButton}" HorizontalContentAlignment="Left"/>
+                        <Button x:Name="BtnMenuIcons" Content="📦  Иконки" Height="42" Margin="0,2"
+                                Click="MenuBtn_Click" Tag="Icons"
+                                Style="{StaticResource SecondaryButton}" HorizontalContentAlignment="Left"/>
+                        <Button x:Name="BtnMenuWallpaper" Content="🖼  Обои" Height="42" Margin="0,2"
+                                Click="MenuBtn_Click" Tag="Wallpaper"
+                                Style="{StaticResource SecondaryButton}" HorizontalContentAlignment="Left"/>
+                        <Button x:Name="BtnMenuMusic" Content="🎵  Музыка" Height="42" Margin="0,2"
+                                Click="MenuBtn_Click" Tag="Music"
+                                Style="{StaticResource SecondaryButton}" HorizontalContentAlignment="Left"/>
+                        <Button x:Name="BtnMenuCursor" Content="🖱  Курсор" Height="42" Margin="0,2"
+                                Click="MenuBtn_Click" Tag="Cursor"
+                                Style="{StaticResource SecondaryButton}" HorizontalContentAlignment="Left"/>
+                        <Button x:Name="BtnMenuFonts" Content="✏  Шрифты" Height="42" Margin="0,2"
+                                Click="MenuBtn_Click" Tag="Fonts"
+                                Style="{StaticResource SecondaryButton}" HorizontalContentAlignment="Left"/>
+
+                        <Separator Background="#2D3561" Margin="0,15"/>
+
+                        <Button x:Name="BtnApplyAll" Content="✅  Применить всё" Height="42" Margin="0,2"
+                                Click="BtnApplyAll_Click"
+                                Style="{StaticResource ModernButton}" HorizontalContentAlignment="Left"/>
+                        <Button x:Name="BtnReset" Content="🔄  Сбросить" Height="42" Margin="0,2"
+                                Click="BtnReset_Click"
+                                Style="{StaticResource SecondaryButton}" HorizontalContentAlignment="Left"/>
+
+                        <!-- Мини-плеер -->
+                        <Border Background="#16213E" CornerRadius="8" Margin="0,20,0,0" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="🎵 Сейчас играет" FontSize="10"
+                                           Foreground="#8892A4" Margin="0,0,0,5"/>
+                                <TextBlock x:Name="TxtNowPlaying" Text="Ничего не выбрано"
+                                           FontSize="11" Foreground="White" TextWrapping="Wrap"/>
+                                <Slider x:Name="SliderVolumeMini" Minimum="0" Maximum="100" Value="30"
+                                        Margin="0,8,0,0" Style="{StaticResource ModernSlider}"
+                                        ValueChanged="SliderVolume_ValueChanged"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
+                                    <Button Content="⏮" Width="28" Height="28" FontSize="12"
+                                            Background="Transparent" Foreground="White" BorderThickness="0"
+                                            Cursor="Hand" Click="BtnPrev_Click"/>
+                                    <Button x:Name="BtnPlayPause" Content="▶" Width="32" Height="32"
+                                            FontSize="14" Background="#E94560" Foreground="White"
+                                            BorderThickness="0" Cursor="Hand" Click="BtnPlayPause_Click"
+                                            Margin="5,0">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        CornerRadius="16">
+                                                    <ContentPresenter HorizontalAlignment="Center"
+                                                                      VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                    <Button Content="⏭" Width="28" Height="28" FontSize="12"
+                                            Background="Transparent" Foreground="White" BorderThickness="0"
+                                            Cursor="Hand" Click="BtnNext_Click"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- ПРАВАЯ ПАНЕЛЬ — КОНТЕНТ СТРАНИЦ -->
+                <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                    <Grid x:Name="ContentArea" Margin="25,20">
+
+                        <!-- ===== СТРАНИЦА: ТЕМЫ ===== -->
+                        <StackPanel x:Name="PageThemes" Visibility="Visible">
+                            <TextBlock Text="Выбор темы" FontSize="22" FontWeight="Bold"
+                                       Foreground="White" Margin="0,0,0,5"/>
+                            <TextBlock Text="Нажми на тему — обои и цвета обновятся автоматически"
+                                       FontSize="13" Foreground="#8892A4" Margin="0,0,0,20"/>
+
+                            <!-- Сетка тем -->
+                            <WrapPanel x:Name="ThemePanel"/>
+                        </StackPanel>
+
+                        <!-- ===== СТРАНИЦА: ИКОНКИ ===== -->
+                        <StackPanel x:Name="PageIcons" Visibility="Collapsed">
+                            <TextBlock Text="Цвет иконок" FontSize="22" FontWeight="Bold"
+                                       Foreground="White" Margin="0,0,0,5"/>
+                            <TextBlock Text="Выбери цветовую схему для системных иконок"
+                                       FontSize="13" Foreground="#8892A4" Margin="0,0,0,20"/>
+
+                            <WrapPanel x:Name="IconPanel"/>
+
+                            <TextBlock Text="Предпросмотр иконок" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="White" Margin="0,25,0,15"/>
+                            <Border Background="#16213E" CornerRadius="10" Padding="20">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <StackPanel Margin="15" HorizontalAlignment="Center">
+                                        <Border x:Name="IconPreview1" Width="48" Height="48"
+                                                Background="#E94560" CornerRadius="10"
+                                                HorizontalAlignment="Center">
+                                            <TextBlock Text="📁" FontSize="24"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <TextBlock Text="Папки" Foreground="#8892A4" FontSize="11"
+                                                   HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="15" HorizontalAlignment="Center">
+                                        <Border x:Name="IconPreview2" Width="48" Height="48"
+                                                Background="#E94560" CornerRadius="10"
+                                                HorizontalAlignment="Center">
+                                            <TextBlock Text="⚙" FontSize="24"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <TextBlock Text="Настройки" Foreground="#8892A4" FontSize="11"
+                                                   HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="15" HorizontalAlignment="Center">
+                                        <Border x:Name="IconPreview3" Width="48" Height="48"
+                                                Background="#E94560" CornerRadius="10"
+                                                HorizontalAlignment="Center">
+                                            <TextBlock Text="🌐" FontSize="24"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <TextBlock Text="Браузер" Foreground="#8892A4" FontSize="11"
+                                                   HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="15" HorizontalAlignment="Center">
+                                        <Border x:Name="IconPreview4" Width="48" Height="48"
+                                                Background="#E94560" CornerRadius="10"
+                                                HorizontalAlignment="Center">
+                                            <TextBlock Text="🎵" FontSize="24"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <TextBlock Text="Музыка" Foreground="#8892A4" FontSize="11"
+                                                   HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- ===== СТРАНИЦА: ОБОИ ===== -->
+                        <StackPanel x:Name="PageWallpaper" Visibility="Collapsed">
+                            <TextBlock Text="Обои рабочего стола" FontSize="22" FontWeight="Bold"
+                                       Foreground="White" Margin="0,0,0,5"/>
+                            <TextBlock Text="Выбери или загрузи собственное изображение"
+                                       FontSize="13" Foreground="#8892A4" Margin="0,0,0,20"/>
+
+                            <WrapPanel x:Name="WallpaperPanel"/>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                                <Button Content="📂  Выбрать файл..." Style="{StaticResource ModernButton}"
+                                        Click="BtnPickWallpaper_Click" Margin="0,0,10,0"/>
+                                <Button Content="🎲  Случайные обои" Style="{StaticResource SecondaryButton}"
+                                        Click="BtnRandomWallpaper_Click"/>
+                            </StackPanel>
+
+                            <!-- Режим обоев -->
+                            <TextBlock Text="Режим отображения" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="White" Margin="0,25,0,15"/>
+                            <WrapPanel>
+                                <RadioButton x:Name="RbFill" Content="Заполнить" IsChecked="True"
+                                             Foreground="White" Margin="0,0,20,0" Cursor="Hand"/>
+                                <RadioButton Content="Вписать" Foreground="White" Margin="0,0,20,0" Cursor="Hand"/>
+                                <RadioButton Content="Растянуть" Foreground="White" Margin="0,0,20,0" Cursor="Hand"/>
+                                <RadioButton Content="По центру" Foreground="White" Cursor="Hand"/>
+                            </WrapPanel>
+                        </StackPanel>
+
+                        <!-- ===== СТРАНИЦА: МУЗЫКА ===== -->
+                        <StackPanel x:Name="PageMusic" Visibility="Collapsed">
+                            <TextBlock Text="Фоновая музыка" FontSize="22" FontWeight="Bold"
+                                       Foreground="White" Margin="0,0,0,5"/>
+                            <TextBlock Text="Тихая фоновая музыка для атмосферы"
+                                       FontSize="13" Foreground="#8892A4" Margin="0,0,0,20"/>
+
+                            <!-- Список треков -->
+                            <Border Background="#16213E" CornerRadius="10" Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="ВСТРОЕННЫЕ ТРЕКИ" FontSize="10"
+                                               Foreground="#8892A4" FontWeight="Bold" Margin="0,0,0,10"/>
+                                    <ListBox x:Name="MusicList" Background="Transparent"
+                                             BorderThickness="0" SelectionChanged="MusicList_SelectionChanged">
+                                        <ListBox.ItemContainerStyle>
+                                            <Style TargetType="ListBoxItem">
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="Padding" Value="10,8"/>
+                                                <Setter Property="Cursor" Value="Hand"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsSelected" Value="True">
+                                                        <Setter Property="Background" Value="#2D3561"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#1A2040"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ListBox.ItemContainerStyle>
+                                    </ListBox>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Настройки громкости -->
+                            <TextBlock Text="Громкость" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="White" Margin="0,25,0,15"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="50"/>
+                                </Grid.ColumnDefinitions>
+                                <Slider x:Name="SliderVolume" Minimum="0" Maximum="100" Value="30"
+                                        Style="{StaticResource ModernSlider}"
+                                        ValueChanged="SliderVolume_ValueChanged"/>
+                                <TextBlock x:Name="TxtVolumePercent" Grid.Column="1" Text="30%"
+                                           Foreground="White" VerticalAlignment="Center"
+                                           HorizontalAlignment="Right"/>
+                            </Grid>
+
+                            <Button Content="📂  Добавить свой трек" Style="{StaticResource SecondaryButton}"
+                                    Margin="0,20,0,0" HorizontalAlignment="Left"
+                                    Click="BtnAddTrack_Click"/>
+                        </StackPanel>
+
+                        <!-- ===== СТРАНИЦА: КУРСОР ===== -->
+                        <StackPanel x:Name="PageCursor" Visibility="Collapsed">
+                            <TextBlock Text="Курсор мыши" FontSize="22" FontWeight="Bold"
+                                       Foreground="White" Margin="0,0,0,5"/>
+                            <TextBlock Text="Смена курсора (требует прав администратора)"
+                                       FontSize="13" Foreground="#8892A4" Margin="0,0,0,20"/>
+                            <WrapPanel x:Name="CursorPanel"/>
+                        </StackPanel>
+
+                        <!-- ===== СТРАНИЦА: ШРИФТЫ ===== -->
+                        <StackPanel x:Name="PageFonts" Visibility="Collapsed">
+                            <TextBlock Text="Системные шрифты" FontSize="22" FontWeight="Bold"
+                                       Foreground="White" Margin="0,0,0,5"/>
+                            <TextBlock Text="Настройка шрифтов системного интерфейса"
+                                       FontSize="13" Foreground="#8892A4" Margin="0,0,0,20"/>
+                            <WrapPanel x:Name="FontPanel"/>
+
+                            <TextBlock Text="Размер шрифта интерфейса" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="White" Margin="0,25,0,15"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="50"/>
+                                </Grid.ColumnDefinitions>
+                                <Slider x:Name="SliderFontSize" Minimum="8" Maximum="18" Value="12"
+                                        Style="{StaticResource ModernSlider}"
+                                        ValueChanged="SliderFontSize_ValueChanged"/>
+                                <TextBlock x:Name="TxtFontSize" Grid.Column="1" Text="12px"
+                                           Foreground="White" VerticalAlignment="Center"
+                                           HorizontalAlignment="Right"/>
+                            </Grid>
+                        </StackPanel>
+
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- ===== СТАТУС БАР ===== -->
+            <Border Grid.Row="2" Background="#0A0A1A" CornerRadius="0,0,12,12">
+                <Grid Margin="20,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="TxtStatus" Text="Готово" Foreground="#8892A4"
+                               FontSize="12" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Text="ThemeForge v1.0  •  Windows 10/11"
+                               Foreground="#4A5568" FontSize="11" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+
+        </Grid>
+    </Border>
+</Window>
