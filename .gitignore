@@ -1,0 +1,22 @@
+# Build outputs
+bin/
+obj/
+*.user
+.vs/
+
+# НЕ игнорируем папки с ресурсами (но игнорируем содержимое)
+# Папки Wallpapers/ и Music/ сам добавляй локально
+Wallpapers/*.png
+Wallpapers/*.jpg
+Wallpapers/*.bmp
+Music/*.mp3
+Music/*.wav
+
+# Оставляем .gitkeep файлы чтобы папки были в репозитории
+!Wallpapers/.gitkeep
+!Music/.gitkeep
+
+# Прочее
+.DS_Store
+Thumbs.db
+*.suo
